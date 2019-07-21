@@ -15,9 +15,7 @@ def to_grey(image: np.ndarray) -> np.ndarray:
 
 
 def to_normalize(image: np.ndarray) -> np.ndarray:
-    sum = image.sum(axis=0)
-    grey = sum / 255
-    return grey
+    return image / 255
 
 
 class Data:
@@ -50,9 +48,9 @@ class Data:
 
 
 if __name__ == '__main__':
-    path = "../data/mnist_py3k.pkl"
-    data = Data("mnist", path, (28, 28))
-    data.show()
+    # path = "../data/mnist_py3k.pkl"
+    # data = Data("mnist", path, (28, 28))
+    # data.show()
 
     path = "../data/cifar_batch-1.pkl"
     data = Data(cifar, path, (32, 32))
