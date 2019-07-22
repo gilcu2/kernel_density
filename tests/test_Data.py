@@ -1,4 +1,4 @@
-from kde.preprocessing import *
+from kde.Data import *
 import numpy as np
 
 dir = "../data/"
