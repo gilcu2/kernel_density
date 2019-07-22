@@ -1,27 +1,26 @@
-from kde.data import *
+from kde.preprocessing import *
 import numpy as np
 
+dir = "../data/"
 
 def test_load_mnist():
-    path = "../data/mnist_py3k.pkl"
-    data = Data("mnist", path, (28, 28))
-    assert data.features.size == 39200000
+    data = Data("mnist", dir)
+    assert data.features.shape == (50000, 28, 28)
 
 
 def test_load_cifar():
-    path = "../data/cifar_batch-1.pkl"
-    data = Data("cifar", path, (32, 32))
-    assert data.features.size == 30720000
+    data = Data(cifar, dir)
+    assert data.features.shape == (50000, 32, 32)
 
 
-def test_to_fray_level():
+def test_to_grey_level():
     rgb = np.arange(12).reshape(3, 2, 2)
     grey = to_grey(rgb)
     assert grey.shape == (2, 2)
     assert grey[0, 0] == 4
 
 
-def test_vectorizer_to_fray_level():
+def test_vectorizer_to_grey_level():
     rgb_array = np.arange(24).reshape(2, 3, 2, 2)
     print("\nrgb:\n", rgb_array)
     grey_array = np.array([to_grey(image) for image in rgb_array])
