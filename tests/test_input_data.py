@@ -1,15 +1,15 @@
-from kde.Data import *
+from kde.input_data import *
 import numpy as np
 
 dir = "../data/"
 
 def test_load_mnist():
-    data = Data("mnist", dir)
+    data = InputData("mnist", dir)
     assert data.features.shape == (50000, 28, 28)
 
 
 def test_load_cifar():
-    data = Data(cifar, dir)
+    data = InputData(cifar, dir)
     assert data.features.shape == (50000, 32, 32)
 
 
