@@ -1,23 +1,28 @@
-import numpy as np
-from math import *
 from functools import reduce
 
-
-def fxy(x: float, y: float, c1: float, c2: float) -> float:
-    xmy = x - y
-    return -(xmy * xmy / c1 + c2)
+import numpy as np
+from math import *
 
 
-def reduce_vector(xj: float, vector: np.ndarray, c1: float, c2: float, c3: float) -> float:
-    return reduce((lambda acum, y: acum + fxy(xj, y, c1, c2) + c3), vector, 0.0)
+def square_difference(x: np.ndarray, y: np.ndarray) -> float:
+    diff = x - y
+    return np.dot(diff, diff)
 
 
-def logpx(x: np.ndarray, vector: np.ndarray, c1: float, c2: float, c3: float) -> float:
-    sum = reduce((lambda acum, xj: acum + reduce_vector(xj, vector, c1, c2, c3)), vector, 0.0)
+def logpx(x: np.ndarray, train: np.ndarray, A: float, C: float, cB: float) -> float:
+    sum = reduce((lambda acum, y: acum + exp(A + C + cB * square_difference(x, y))), train, 0.0)
     return log(sum)
 
 
-def kde_intensity(train: np.ndarray, validation: np.ndarray, zigma: float) -> float:
-    c1 = 2 * zigma * zigma
-    c2 = 0.5 * log(pi * c1)
-    c3 = 1.0 / train.shape(0)
+def mean_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> float:
+    train_shape = train.shape
+    k = train_shape[0]
+    m = validation.shape[0]
+    d = train_shape[1]
+    A = log(1.0 / k)
+    c1 = 2 * sigma * sigma
+    cB = 1 / c1
+    C = -d / 2.0 * log(pi * c1)
+
+    sum = reduce(lambda acum, x: acum + logpx(x, train, A, C, cB), validation, 0.0)
+    return sum / m
