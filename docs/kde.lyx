@@ -147,13 +147,13 @@ Assuming that
 \begin_inset Formula $p(x|z_{i})$
 \end_inset
 
- is described by the product Gaussian components for each dimension then:
+ is described by the product of Gaussian components for each dimension:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\log p(x)=\log\sum_{i=1}^{k}\frac{1}{k\sigma\sqrt{2\pi}}\prod_{j=1}^{d}e^{-\frac{(x_{j}-z_{ij})^{2}}{2\sigma^{2}}}
+p(x_{j}|z_{i})=\frac{1}{\sigma\sqrt{2\pi}}e^{\frac{(x_{j}-z_{ij})^{2}}{2\sigma^{2}}}
 \]
 
 \end_inset
@@ -162,13 +162,28 @@ Assuming that
 \end_layout
 
 \begin_layout Standard
-Applying the exponential and logarithms rules:
+Then:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\log p(x)=\log\frac{1}{k\sigma\sqrt{2\pi}}+\log\sum_{i=1}^{k}e^{-\frac{\left|x-z_{i}\right|^{2}}{2\sigma^{2}}}
+\log p(x)=\log\sum_{i=1}^{k}\frac{1}{k(\sigma\sqrt{2\pi})^{d}}\prod_{j=1}^{d}e^{-\frac{(x_{j}-z_{ij})^{2}}{2\sigma^{2}}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Applying the exponential and logarithms rules this can be expressed as:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\log p(x)=-\log k-d\log\sigma\sqrt{2\pi}+\log\sum_{i=1}^{k}e^{-\frac{\left|x-z_{i}\right|^{2}}{2\sigma^{2}}}
 \]
 
 \end_inset

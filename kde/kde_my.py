@@ -13,7 +13,7 @@ def square_difference(x: np.ndarray, y: np.ndarray) -> float:
 
 
 def exp_part(x: np.ndarray, y: np.ndarray, c1: float) -> float:
-    r = c1 * square_difference(x, y)
+    r = exp(-square_difference(x, y) / c1)
     return r
 
 
@@ -27,11 +27,11 @@ def sum_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> 
     train_shape = train.shape
     k = train_shape[0]
     d = train_shape[1]
-    c = 1.0 / (k * sigma * sqrt(2 * pi))
-    c1 = 1.0 / (2 * sigma * sigma)
+    c = -log(k) - d * log(sigma) - d / 2 * log(2 * pi)
+    c1 = (2 * sigma * sigma)
 
     sum = reduce(lambda acum, x: acum + logpx(x, train, c, c1), validation, 0.0)
-    return sum
+    return c + sum
 
 
 def sum_probability_tuple(t: (np.ndarray, np.ndarray, float)) -> float:
