@@ -1,4 +1,4 @@
-from kde.kde import *
+from kde.kde_proposed import *
 
 
 def test_square_difference():

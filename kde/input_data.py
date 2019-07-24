@@ -23,7 +23,7 @@ def to_normalize(image: np.ndarray) -> np.ndarray:
 
 def show(data, rows: int = 4, columns: int = 4) -> None:
     for i in range(rows * columns):
-        image = data.features[i]
+        image = data.features[i].reshape(data.shape[1], data.shape[2])
         plt.subplot(rows, columns, i + 1)
         plt.imshow(image, cmap='gray')
         plt.title(data.get_label(i))
