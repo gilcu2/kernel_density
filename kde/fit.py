@@ -40,7 +40,11 @@ if __name__ == '__main__':
         print('Data:', data_name)
 
         train_data = LearningData.from_file(data_name, 'train', dir)
+        print("Training:", train_data.shape)
+
         validation_data = LearningData.from_file(data_name, 'validation', dir)
+        print("Validation:", validation_data.shape)
+
         fit(sigmas, train_data.features, validation_data.features)
 
     print('End fit', now())
