@@ -1,10 +1,9 @@
+import multiprocessing
 from functools import reduce
 
 from math import *
 
 from learning_data import *
-
-import multiprocessing
 
 
 def square_difference(x: np.ndarray, y: np.ndarray) -> float:
@@ -35,14 +34,20 @@ def sum_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> 
     return sum
 
 
-def sum_probability_parallel(train: np.ndarray, validation: np.ndarray, sigma: float, np: int) -> float:
-    validation_split = np.array_split(validation, np)
+def sum_probability_tuple(t: (np.ndarray, np.ndarray, float)) -> float:
+    return sum_probability(t[0], t[1], t[2])
 
-    pool = multiprocessing.Pool(np)
-    results = pool.map(sum_probability, )
+
+def sum_probability_parallel(train: np.ndarray, validation: np.ndarray, sigma: float, cores: int = 8) -> float:
+    validation_split = np.array_split(validation, cores)
+    data_split = map((lambda x: (train, x, sigma)), validation_split)
+
+    pool = multiprocessing.Pool(cores)
+    partial_sums = pool.map(sum_probability_tuple, data_split)
+    return sum(partial_sums)
 
 
 def mean_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> float:
     m = validation.shape[0]
-    sum = sum_probability(train, validation, sigma)
+    sum = sum_probability_parallel(train, validation, sigma)
     return sum / m

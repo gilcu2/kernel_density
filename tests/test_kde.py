@@ -1,4 +1,5 @@
-from kde.kde_proposed import *
+from kde.kde_my import *
+from time import time
 
 
 def test_square_difference():
@@ -6,6 +7,18 @@ def test_square_difference():
     v2 = np.array([0.4, 0.6])
     square_diff = square_difference(v1, v2)
     assert square_diff == 0.25
+
+
+def test_square_difference_times():
+    begin = time()
+    v1 = np.random.rand(10000000)
+    v2 = np.random.rand(10000000)
+    # np.dot(v1, v2)
+    square_diff = square_difference(v1, v2)
+    total = time() - begin
+    print("Time:", total)
+
+    assert total < 1
 
 
 def test_logpx():
