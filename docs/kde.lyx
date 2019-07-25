@@ -153,7 +153,7 @@ Assuming that
 \begin_layout Standard
 \begin_inset Formula 
 \[
-p(x_{j}|z_{i})=\frac{1}{\sigma\sqrt{2\pi}}e^{\frac{(x_{j}-z_{ij})^{2}}{2\sigma^{2}}}
+p(x_{j}|z_{i})=\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x_{j}-z_{ij})^{2}}{2\sigma^{2}}}
 \]
 
 \end_inset
@@ -218,11 +218,31 @@ This is equivalent to:
 \end_layout
 
 \begin_layout Standard
-Unless both formulas are equivalent in the work is used the first one because
- the computation that depends of the vector is small and more separated
- of the computation that only depends on parameters and sizes that need
+Unless both formulas produce the same results, in the work is used the first
+ one.
+ On it the computation that depends of the data vectors is small and separated
+ of the computation that only depends on parameters and sizes, that need
  to be computed only one time.
  So, it is a bit easier to optimize the code in this way.
+\end_layout
+
+\begin_layout Standard
+Finally, for validate the result the average over another data is computed:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Q=\frac{1}{m}\sum_{i=1}^{m}\log p(x_{i})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Special formula
 \end_layout
 
 \begin_layout Standard
@@ -269,17 +289,35 @@ Implementation
 \end_layout
 
 \begin_layout Standard
+The implementation consist of one module named kde and the corresponding
+ test module.
+ There are 3 main programs: preprocessing.py that create the requested data
+ from the original, fit.py that find the best 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ and apply.py that run the best 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ found over the testing collection.
+ Besides there are two version of the kde implementation using both formulas.
+ In the root directory is a Readme.md file that explain the steps for run
+ the programs.
+\end_layout
+
+\begin_layout Standard
 The interpreted and dynamic computation of python allow an easy programming
  but the execution is very inefficient because every object use a lot of
  additional memory and need to check its type in execution time.
- This problem increase with the size of the data.
+ This problem increase with the data size.
  It is needed to avoid computation in Python to achieve a better performance.
- Due to this problem a lot of libraries implemented in C or other languages
+ Due to this problem, a lot of libraries implemented in C or other languages
  have been created.
  This libraries do the hard work and python works as the glue between then.
  In particular numpy is the basic library for scientific computing.
  It implements vector operations that can be optimized for some architectures.
- 
+ In our running numpy was using openblas library.
 \end_layout
 
 \begin_layout Standard
@@ -293,8 +331,367 @@ The first optimization was implement all the operations that where possible
 The second was paralyzing the code at a higher functional level.
  This algorithm offer several levels of parallelism, in particular the terms
  of the final evaluating function can be computed independently.
- The validation or testing matrix is divided among the available processors
- using the multiprocessing library.
+ For compute the validation or testing, the matrix is divided among the
+ available processors using the multiprocessing library.
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+First, the best value of 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ for each data was found.
+ The result are:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minist
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cifar
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Q
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Q
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.05
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-3208
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-2489
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.08
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-635
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-554
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-131
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+230
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+347
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-234
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-296
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-741
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-962
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1051
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1368
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1272
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1658
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As can be see the better fit for both data is obtained when 
+\begin_inset Formula $\sigma=0.2$
+\end_inset
+
+ and the fits improve gradually while are more near the best value.
+ One thing I do not understand is why positive values are obtained.
+ If we are computing log of probabilities the results must be negatives.
+ I implemented both formula versions and the results were the same.
+ Unless I have doubt about the absolute values I thing that the trend is
+ clear.
+ When we get the optimized value of 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is when the kernel density estimation better adjust with the validation
+ data.
+\end_layout
+
+\begin_layout Standard
+The times for Minist were around 2 minutes while for Cifar were 5 minutes.
+ These is an expected behavior because Mnist images are blanck and white
+ with a lot of ceros while Cifar is created by averaging color images and
+ have a few zeros.
+\end_layout
+
+\begin_layout Section
+KDE on images
+\end_layout
+
+\begin_layout Standard
+The kernel density estimation is a way to learn and reproduce some function,
+ in particular in gray images to learn the intensity on each point.
+ For me have more sense if it is used to learn one class, for example in
+ Mnist learn each number.
+ With the corresponding estimation we can for example create an image of
+ the average number.
 \end_layout
 
 \begin_layout Standard

@@ -30,7 +30,6 @@ if __name__ == '__main__':
     dir = "../data/"
     datas = [mnist, cifar]
     sigmas = [0.05, 0.08, 0.1, 0.2, 0.5, 1.0, 1.5, 2.0]
-    sigmas.reverse()
 
     print('Begin fit', now())
 
