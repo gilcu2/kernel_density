@@ -200,13 +200,6 @@ Applying the exponential and logarithms rules this can be expressed as:
 \end_inset
 
 
-\begin_inset CommandInset label
-LatexCommand label
-name "Eq 1"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -222,9 +215,45 @@ This is equivalent to:
 \end_inset
 
 
-\begin_inset CommandInset label
-LatexCommand label
-name "Eq 2"
+\end_layout
+
+\begin_layout Standard
+Unless both formulas are equivalent in the work is used the first one because
+ the computation that depends of the vector is small and more separated
+ of the computation that only depends on parameters and sizes that need
+ to be computed only one time.
+ So, it is a bit easier to optimize the code in this way.
+\end_layout
+
+\begin_layout Standard
+One problem we found was the computation of 
+\begin_inset Formula $\log\sum_{i=1}^{k}e^{-\frac{\left|x-z_{i}\right|^{2}}{2\sigma^{2}}}$
+\end_inset
+
+ because when 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is small and the vector have high dimensionality the exponential return
+ zero due the value be so large and the limited resolution of the fixed
+ point arithmetic.
+ One solution can be use other arithmetic, but they are so slow.
+ The problem can be solved more efficiently using LogSumExp (
+\begin_inset CommandInset citation
+LatexCommand cite
+key "LogSumExp"
+literal "false"
+
+\end_inset
+
+) This function set:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\log\sum e^{x_{i}}=\max(x_{i})+\log\sum e^{x_{i}-\max(x_{i})}
+\]
 
 \end_inset
 
@@ -232,57 +261,7 @@ name "Eq 2"
 \end_layout
 
 \begin_layout Standard
-Unless both formulas are equivalent they have implication for computing
- due to the limit resolution and approximate computation in the computer.
- Eq 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Eq 1"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- can have problems to compute when 
-\begin_inset Formula $\sigma$
-\end_inset
-
- is small because the exponential can became 0.
- Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Eq 2"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- can manage better this cases because when 
-\begin_inset Formula $\sigma$
-\end_inset
-
- is small 
-\begin_inset Formula $\log2\pi\sigma^{2}$
-\end_inset
-
- is negative and decrease the sum.
- However, when 
-\begin_inset Formula $\sigma$
-\end_inset
-
- is big 
-\begin_inset Formula $d\log2\pi\sigma^{2}$
-\end_inset
-
- can be so big again and the exponential become 0.
- So, depending of the 
-\begin_inset Formula $\sigma$
-\end_inset
-
- is better use one or another.
+Using it, the exponents are not big and the resolution problem doesn't happens.
 \end_layout
 
 \begin_layout Section
@@ -292,13 +271,30 @@ Implementation
 \begin_layout Standard
 The interpreted and dynamic computation of python allow an easy programming
  but the execution is very inefficient because every object use a lot of
- memory and need to check its type in execution time.
+ additional memory and need to check its type in execution time.
  This problem increase with the size of the data.
  It is needed to avoid computation in Python to achieve a better performance.
  Due to this problem a lot of libraries implemented in C or other languages
  have been created.
  This libraries do the hard work and python works as the glue between then.
- In particular numpy is the basic 
+ In particular numpy is the basic library for scientific computing.
+ It implements vector operations that can be optimized for some architectures.
+ 
+\end_layout
+
+\begin_layout Standard
+The first optimization was implement all the operations that where possible
+ using numpy functions over arrays.
+ This avoid the overload python execution and can take advantage of the
+ vector operation.
+\end_layout
+
+\begin_layout Standard
+The second was paralyzing the code at a higher functional level.
+ This algorithm offer several levels of parallelism, in particular the terms
+ of the final evaluating function can be computed independently.
+ The validation or testing matrix is divided among the available processors
+ using the multiprocessing library.
 \end_layout
 
 \begin_layout Standard
