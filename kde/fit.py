@@ -1,6 +1,6 @@
 from math import *
 
-import kde_small_sigma
+from kde_big_sigma import sum_probability_parallel
 from learning_data import *
 
 
@@ -13,7 +13,7 @@ def fit(sigmas: List[float], train: np.ndarray, validation: np.ndarray) -> (floa
 
         print('\nsigma:', sigma, now())
 
-        value = kde_small_sigma.sum_probability_parallel(train, validation, sigma) / m
+        value = sum_probability_parallel(train, validation, sigma) / m
 
         end = now()
         print('mean log probability:', value)
@@ -29,13 +29,13 @@ def fit(sigmas: List[float], train: np.ndarray, validation: np.ndarray) -> (floa
 if __name__ == '__main__':
     dir = "../data/"
     datas = [mnist, cifar]
-    sigmas = [0.08, 0.1, 0.2, 0.5, 1.0, 1.5, 2.0]
+    sigmas = [0.05, 0.08, 0.1, 0.2, 0.5, 1.0, 1.5, 2.0]
     sigmas.reverse()
 
     print('Begin fit', now())
 
     for data_name in datas:
-        print('Data:', data_name)
+        print('\nData:', data_name)
 
         train_data = LearningData.from_file(data_name, 'train', dir)
         print("Training:", train_data.shape)

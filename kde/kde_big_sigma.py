@@ -1,6 +1,5 @@
 import multiprocessing
 from functools import reduce
-
 from math import *
 
 from learning_data import *
@@ -25,9 +24,11 @@ def LSE(x: np.ndarray) -> float:
     return r
 
 
-def logpx(x: np.ndarray, train: np.ndarray, c1: float) -> float:
-    sum_exp = reduce((lambda acum, y: acum + exp_part(x, y, c1)), train, 0.0)
-    r = np.log(sum_exp)
+def log_sum(x: np.ndarray, train: np.ndarray, c1: float) -> float:
+    diff = train - x
+    modules2 = np.square(np.linalg.norm(diff, axis=1))
+    by_factor = -modules2 / c1
+    r = LSE(by_factor)
     return r
 
 
@@ -39,7 +40,7 @@ def sum_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> 
     c = -log(k) - d * log(sigma) - d / 2 * log(2 * pi)
     c1 = (2 * sigma * sigma)
 
-    sum = reduce(lambda acum, x: acum + logpx(x, train, c1), validation, 0.0)
+    sum = reduce(lambda acum, x: acum + log_sum(x, train, c1), validation, 0.0)
     return m * c + sum
 
 
