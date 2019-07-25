@@ -183,7 +183,18 @@ Applying the exponential and logarithms rules this can be expressed as:
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\log p(x)=-\log k-d\log\sigma\sqrt{2\pi}+\log\sum_{i=1}^{k}e^{-\frac{\left|x-z_{i}\right|^{2}}{2\sigma^{2}}}
+\log p(x)=-\log k-d\log\sigma-\frac{d}{2}\log2\pi+\log\sum_{i=1}^{k}e^{-\sum_{j=1}^{d}\frac{(x-z_{ij})^{2}}{2\sigma^{2}}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\log p(x)=-\log k-d\log\sigma-\frac{d}{2}\log2\pi+\log\sum_{i=1}^{k}e^{-\frac{\left|x-z_{i}\right|^{2}}{2\sigma^{2}}}
 \]
 
 \end_inset

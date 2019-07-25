@@ -1,4 +1,4 @@
-from datetime import datetime
+
 from time import time
 
 from kde_my import *
@@ -22,10 +22,6 @@ def fit(sigmas: List[float], train: np.ndarray, validation: np.ndarray) -> (floa
             better_value = value
 
     return better_sigma, better_value
-
-
-def now():
-    return datetime.now()
 
 
 if __name__ == '__main__':

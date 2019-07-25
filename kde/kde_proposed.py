@@ -1,3 +1,4 @@
+import multiprocessing
 from functools import reduce
 
 from math import *
@@ -23,10 +24,9 @@ def logpx(x: np.ndarray, train: np.ndarray, A: float, C: float, cB: float) -> fl
     return log(sum)
 
 
-def mean_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> float:
+def sum_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> float:
     train_shape = train.shape
     k = train_shape[0]
-    m = validation.shape[0]
     d = train_shape[1]
     A = log(1.0 / k)
     c1 = 2 * sigma * sigma
@@ -34,4 +34,44 @@ def mean_probability(train: np.ndarray, validation: np.ndarray, sigma: float) ->
     C = d * log(pi * c1) / 2.0
 
     sum = reduce(lambda acum, x: acum + logpx(x, train, A, C, cB), validation, 0.0)
+    return sum
+
+
+def sum_probability_tuple(t: (np.ndarray, np.ndarray, float)) -> float:
+    return sum_probability(t[0], t[1], t[2])
+
+
+def sum_probability_parallel(train: np.ndarray, validation: np.ndarray, sigma: float, cores: int = 8) -> float:
+    validation_split = np.array_split(validation, cores)
+    data_split = map((lambda x: (train, x, sigma)), validation_split)
+
+    pool = multiprocessing.Pool(cores)
+    partial_sums = pool.map(sum_probability_tuple, data_split)
+    return sum(partial_sums)
+
+
+def mean_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> float:
+    m = validation.shape[0]
+    sum = sum_probability_parallel(train, validation, sigma)
     return sum / m
+
+
+if __name__ == '__main__':
+    dir = "../data/"
+
+    train_data = LearningData.from_file(cifar, 'train', dir)
+    print("Training:", train_data.shape)
+
+    validation_data = LearningData.from_file(cifar, 'validation', dir)
+    print("Validation:", validation_data.shape)
+
+    sigma = 0.5
+
+    begin = now()
+
+    print('\nsigma:', sigma, now())
+
+    value = mean_probability(train_data.features, validation_data.features, sigma)
+    end = now()
+    print('mean log probability:', value)
+    print('Time:', end - begin, now())

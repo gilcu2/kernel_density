@@ -42,3 +42,4 @@ def test_logpx():
     ])
     r = mean_probability(train, validation, sigma=1.0)
     assert r < 0.0
+

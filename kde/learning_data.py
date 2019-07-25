@@ -1,8 +1,15 @@
-from typing import *
-import input_data
-from input_data import mnist, cifar, text_labels, show
-import numpy as np
 import pickle
+from datetime import datetime
+from typing import *
+
+import numpy as np
+
+import input_data
+from input_data import mnist, cifar, show
+
+
+def now():
+    return datetime.now()
 
 
 def load_pickle(path: str) -> Any:
