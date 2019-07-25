@@ -1,22 +1,24 @@
+from math import *
 
-from time import time
-
-from kde_my import *
+import kde_small_sigma
 from learning_data import *
 
 
 def fit(sigmas: List[float], train: np.ndarray, validation: np.ndarray) -> (float, float):
     better_value = -nan
     better_sigma = -nan
+    m = validation.shape[0]
     for sigma in sigmas:
-        begin = time()
+        begin = now()
 
         print('\nsigma:', sigma, now())
 
-        value = mean_probability(train, validation, sigma)
-        end = time()
+        value = kde_small_sigma.sum_probability_parallel(train, validation, sigma) / m
+
+        end = now()
         print('mean log probability:', value)
         print('Time:', end - begin, now())
+
         if value > better_value:
             better_sigma = sigma
             better_value = value
@@ -26,9 +28,8 @@ def fit(sigmas: List[float], train: np.ndarray, validation: np.ndarray) -> (floa
 
 if __name__ == '__main__':
     dir = "../data/"
-    # datas = [mnist, cifar]
-    datas = [cifar]
-    sigmas = [0.05, 0.08, 0.1, 0.2, 0.5, 1.0, 1.5, 2.0]
+    datas = [mnist, cifar]
+    sigmas = [0.08, 0.1, 0.2, 0.5, 1.0, 1.5, 2.0]
     sigmas.reverse()
 
     print('Begin fit', now())

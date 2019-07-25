@@ -1,4 +1,4 @@
-from kde.kde_my import *
+from kde.kde_big_sigma import *
 from time import time
 
 

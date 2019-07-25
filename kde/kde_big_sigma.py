@@ -12,29 +12,29 @@ def square_difference(x: np.ndarray, y: np.ndarray) -> float:
     return r
 
 
-def exp_part(x: np.ndarray, y: np.ndarray, A: float, C: float, cB: float) -> float:
-    B = cB * square_difference(x, y)
-    exponent = A - B - C
-    r = exp(exponent)
+def exp_part(x: np.ndarray, y: np.ndarray, c1: float) -> float:
+    frac = np.float128(-square_difference(x, y) / c1)
+    r = np.exp(frac)
+
     return r
 
 
-def logpx(x: np.ndarray, train: np.ndarray, A: float, C: float, cB: float) -> float:
-    sum = reduce((lambda acum, y: acum + exp_part(x, y, A, C, cB)), train, 0.0)
-    return log(sum)
+def logpx(x: np.ndarray, train: np.ndarray, c1: float) -> float:
+    sum_exp = reduce((lambda acum, y: acum + exp_part(x, y, c1)), train, 0.0)
+    r = np.log(sum_exp)
+    return r
 
 
 def sum_probability(train: np.ndarray, validation: np.ndarray, sigma: float) -> float:
     train_shape = train.shape
     k = train_shape[0]
+    m = validation.shape[0]
     d = train_shape[1]
-    A = log(1.0 / k)
-    c1 = 2 * sigma * sigma
-    cB = 1 / c1
-    C = d * log(pi * c1) / 2.0
+    c = -log(k) - d * log(sigma) - d / 2 * log(2 * pi)
+    c1 = (2 * sigma * sigma)
 
-    sum = reduce(lambda acum, x: acum + logpx(x, train, A, C, cB), validation, 0.0)
-    return sum
+    sum = reduce(lambda acum, x: acum + logpx(x, train, c1), validation, 0.0)
+    return m * c + sum
 
 
 def sum_probability_tuple(t: (np.ndarray, np.ndarray, float)) -> float:
@@ -59,19 +59,29 @@ def mean_probability(train: np.ndarray, validation: np.ndarray, sigma: float) ->
 if __name__ == '__main__':
     dir = "../data/"
 
+    print("My formula")
+
     train_data = LearningData.from_file(cifar, 'train', dir)
-    print("Training:", train_data.shape)
 
     validation_data = LearningData.from_file(cifar, 'validation', dir)
-    print("Validation:", validation_data.shape)
 
-    sigma = 0.5
+    sigmas = [0.08, 0.1, 0.2, 0.5, 1.0, 1.5, 2.0]
+
+    k = 10000
+    m = 100
+
+    train = train_data.features[:k]
+    validation = validation_data.features[:m]
+
+    print("Training:", train.shape)
+    print("Validation:", validation.shape)
 
     begin = now()
 
-    print('\nsigma:', sigma, now())
+    for sigma in sigmas:
+        print('\nsigma:', sigma, now())
 
-    value = mean_probability(train_data.features, validation_data.features, sigma)
-    end = now()
-    print('mean log probability:', value)
-    print('Time:', end - begin, now())
+        value = sum_probability(train, validation, sigma)
+        end = now()
+        print('sum log probability:', value)
+        print('Time:', end - begin, now())
