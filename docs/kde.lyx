@@ -87,7 +87,7 @@ Reynaldo Gil
 
 \begin_layout Abstract
 The work show the results of creating and optimizing python code for computing
- a Kernel Density Estimator.
+ a Kernel Density Estimator over object of very high dimensionality.
 \end_layout
 
 \begin_layout Section
@@ -107,7 +107,7 @@ literal "false"
 ).
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Mathematical model
 \end_layout
 
@@ -200,6 +200,105 @@ Applying the exponential and logarithms rules this can be expressed as:
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "Eq 1"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is equivalent to:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\log p(x)=\log\sum_{i=1}^{k}e^{\log\frac{1}{k}-\sum_{j=1}^{d}\left\{ \frac{(x_{j-z_{ij})^{2}}}{2\sigma²}+\frac{1}{2}\log2\pi\sigma^{2}\right\} }
+\]
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "Eq 2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Unless both formulas are equivalent they have implication for computing
+ due to the limit resolution and approximate computation in the computer.
+ Eq 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Eq 1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ can have problems to compute when 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is small because the exponential can became 0.
+ Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Eq 2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ can manage better this cases because when 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is small 
+\begin_inset Formula $\log2\pi\sigma^{2}$
+\end_inset
+
+ is negative and decrease the sum.
+ However, when 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is big 
+\begin_inset Formula $d\log2\pi\sigma^{2}$
+\end_inset
+
+ can be so big again and the exponential become 0.
+ So, depending of the 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is better use one or another.
+\end_layout
+
+\begin_layout Section
+Implementation
+\end_layout
+
+\begin_layout Standard
+The interpreted and dynamic computation of python allow an easy programming
+ but the execution is very inefficient because every object use a lot of
+ memory and need to check its type in execution time.
+ This problem increase with the size of the data.
+ It is needed to avoid computation in Python to achieve a better performance.
+ Due to this problem a lot of libraries implemented in C or other languages
+ have been created.
+ This libraries do the hard work and python works as the glue between then.
+ In particular numpy is the basic 
 \end_layout
 
 \begin_layout Standard

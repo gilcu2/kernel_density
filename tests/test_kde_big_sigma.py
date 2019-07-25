@@ -1,5 +1,6 @@
-from kde.kde_big_sigma import *
 from time import time
+
+from kde.kde_big_sigma import *
 
 
 def test_square_difference():
@@ -43,3 +44,9 @@ def test_logpx():
     r = mean_probability(train, validation, sigma=1.0)
     assert r < 0.0
 
+
+def test_LSE():
+    v = np.arange(1000)
+    direct = np.log(np.sum(np.exp(v)))
+    lse = LSE(v)
+    assert lse - direct < 0.000000001
