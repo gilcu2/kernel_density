@@ -60,8 +60,8 @@ def save_results(all_results: Dict[str, FitResults]):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', type=int, default=10000)
-    parser.add_argument('-m', type=int, default=10000)
+    parser.add_argument('-k', type=int, default=10000, help='training size')
+    parser.add_argument('-m', type=int, default=10000, help='validation size')
     args = vars(parser.parse_args())
 
     dir = "../data/"
