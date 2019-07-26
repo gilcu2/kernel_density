@@ -1,9 +1,9 @@
 import numpy as np
 
-import kde_big_sigma
-import kde_small_sigma
-from input_data import cifar
-from learning_data import LearningData
+from kde import kde_big_sigma
+from kde import kde_small_sigma
+from kde.input_data import cifar
+from kde.learning_data import LearningData
 
 
 def test_sum_probability_sample():

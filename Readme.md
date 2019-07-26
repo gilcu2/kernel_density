@@ -7,7 +7,7 @@
 - Unzip the answer file
 - Report in docs/kde.pdf
 
-### Get the data (require wget)ls
+### Get the data (require wget)
 
 - cd data
 - ./download.sh
@@ -17,8 +17,11 @@
 - cd ..
 - ./venv.sh
 
+### Activate venv
+source venv/bin/activate
+
 ### Software Test
-- cd ../tests
+- cd tests
 - pytest
 - All test must end ok
 

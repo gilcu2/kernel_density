@@ -1,7 +1,6 @@
-from kde_big_sigma import sum_probability_parallel
-from learning_data import *
-from datetime import datetime
-from utils import *
+from kde.kde_big_sigma import sum_probability_parallel
+from kde.learning_data import *
+from kde.utils import *
 
 FitResult = Tuple[float, float, datetime]
 FitResults = Tuple[float, float, Sequence[FitResult]]

@@ -3,24 +3,6 @@ from time import time
 from kde.kde_big_sigma import *
 
 
-def test_square_difference():
-    v1 = np.array([0.1, 0.2])
-    v2 = np.array([0.4, 0.6])
-    square_diff = square_difference(v1, v2)
-    assert square_diff == 0.25
-
-
-def test_square_difference_times():
-    begin = time()
-    v1 = np.random.rand(10000000)
-    v2 = np.random.rand(10000000)
-    # np.dot(v1, v2)
-    square_diff = square_difference(v1, v2)
-    total = time() - begin
-    print("Time:", total)
-
-    assert total < 1
-
 
 def test_logpx():
     x = np.array([0.1, 0.2])
@@ -46,17 +28,17 @@ def test_logpx():
 
 
 def test_LSE():
-    v = np.arange(1000)
+    v = np.arange(100)
     direct = np.log(np.sum(np.exp(v)))
     lse = LSE(v)
     assert lse - direct < 0.000000001
 
 
 def test_log_sum1():
-    x = np.array([1.0, 1.0])
-    y = np.array([2.0, 1.0])
+    x = np.array([[1.0, 1.0]])
+    y = np.array([[2.0, 1.0]])
     r = log_sum(x, y, 1.0)
-    expected = 1.0
+    expected = -1.0
     print(r, expected)
     assert r == expected
 
@@ -69,7 +51,7 @@ def test_log_sum2():
     vect = np.array([2.0, 1.0])
 
     r = log_sum(mat, vect, 1.0)
-    expected = log(2 * e)
+    expected = log(2) - 1
     print(r, expected)
     assert abs(r - expected) < 0.0000001
 

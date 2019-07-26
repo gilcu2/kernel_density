@@ -3,7 +3,8 @@ from functools import reduce
 
 from math import *
 
-from learning_data import *
+from kde.learning_data import *
+from kde.utils import *
 
 
 def square_difference(x: np.ndarray, y: np.ndarray) -> float:

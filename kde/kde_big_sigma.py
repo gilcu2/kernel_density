@@ -1,21 +1,10 @@
 import multiprocessing
 from functools import reduce
 from math import *
+from kde.utils import *
 
-from learning_data import *
+from kde.learning_data import *
 
-
-# def square_difference(x: np.ndarray, y: np.ndarray) -> float:
-#     diff = x - y
-#     r = np.dot(diff, diff)
-#     return r
-#
-#
-# def exp_part(x: np.ndarray, y: np.ndarray, c1: float) -> float:
-#     frac = np.float128(-square_difference(x, y) / c1)
-#     r = np.exp(frac)
-#
-#     return r
 
 def LSE(x: np.ndarray) -> float:
     max = np.max(x)

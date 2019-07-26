@@ -2,9 +2,8 @@ import pickle
 from typing import *
 
 import numpy as np
-
-import input_data
-from input_data import mnist, cifar, show
+from kde import input_data
+from kde.input_data import mnist, cifar, show
 
 
 def load_pickle(path: str) -> Any:
@@ -53,5 +52,5 @@ if __name__ == '__main__':
     datas = [mnist, cifar]
 
     for data_name in datas:
-        data = LearningData.from_file(data_name, dir)
+        data = LearningData.from_file(data_name, 'train', dir)
         data.show()
