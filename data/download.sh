@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 echo getting mnist
 wget http://www-labs.iro.umontreal.ca/~lisa/deep/data/mnist/mnist.pkl.gz

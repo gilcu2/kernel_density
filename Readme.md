@@ -7,13 +7,13 @@
 - Unzip the answer file
 - Report in docs/kde.pdf
 
-### Get the data
+### Get the data (require wget)ls
 
 - cd data
 - ./download.sh
 - After that must be in data dir: mnist.pkl,cifar-[1..5].pkl and cifar-test.pkl
 
-### Install python env and dependencies (Require python3 and pip in the path)
+### Install python env and dependencies (Require python3-venv)
 - cd ..
 - ./venv.sh
 

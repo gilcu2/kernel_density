@@ -1,8 +1,8 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 python3 -m venv venv
-venv/scripts/activate
-pip install -m requirements.txt
+source venv/bin/activate
+pip install -r requirements.txt
 
 echo venv installed
 
