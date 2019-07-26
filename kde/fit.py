@@ -1,16 +1,15 @@
-import csv
-from math import *
-
 from kde_big_sigma import sum_probability_parallel
 from learning_data import *
+from datetime import datetime
+from utils import *
 
-FitResult = Tuple[float, float, datetime.timedelta]
+FitResult = Tuple[float, float, datetime]
 FitResults = Tuple[float, float, Sequence[FitResult]]
 
 
 def fit(sigmas: List[float], train: np.ndarray, validation: np.ndarray) -> FitResults:
-    better_value = -nan
-    better_sigma = -nan
+    better_value = -10000.0
+    better_sigma = 0.0
     m = validation.shape[0]
     results = []
     for sigma in sigmas:
@@ -30,30 +29,25 @@ def fit(sigmas: List[float], train: np.ndarray, validation: np.ndarray) -> FitRe
             better_sigma = sigma
             better_value = value
 
-    print("Better:", sigma, value)
+    print("Better:", better_sigma, better_value)
 
     return better_sigma, better_value, results
 
 
 def save_results(all_results: Dict[str, FitResults]):
-    def save_csv(data: List[Tuple[Any]], path: str):
-        with open(path, 'w') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerows(data)
-
-        csvFile.close()
-
     def save_csv_results(name: str, results: FitResults):
         csv_data = [['sigma', 'quality', 'time']]
         for r in results:
             csv_data.append(r)
-        save_csv(name + '-fit.csv')
+        save_csv(csv_data, '../data/' + name + '-fit.csv')
 
     best = [['data', 'sigma', 'quality']]
-    for (data_name, results) in all_results:
+    for (data_name, results) in all_results.items():
         best.append([data_name, results[0], results[1]])
         save_csv_results(data_name, results[2])
-    save_csv(best, 'kde-fit.csv')
+    save_csv(best, '../data/' + 'kde-fit.csv')
+
+    print("results saved in ../data")
 
 
 if __name__ == '__main__':
@@ -64,17 +58,19 @@ if __name__ == '__main__':
     print('Begin fit', now())
 
     results = {}
+    k = 10000
+    m = 10000
 
     for data_name in datas:
         print('\nData:', data_name)
 
-        train_data = LearningData.from_file(data_name, 'train', dir)
-        print("Training:", train_data.shape)
+        train = LearningData.from_file(data_name, 'train', dir).features[:k]
+        print("Training:", train.shape)
 
-        validation_data = LearningData.from_file(data_name, 'validation', dir)
-        print("Validation:", validation_data.shape)
+        validation = LearningData.from_file(data_name, 'validation', dir).features[:m]
+        print("Validation:", validation.shape)
 
-        result = fit(sigmas, train_data.features, validation_data.features)
+        result = fit(sigmas, train, validation)
         results[data_name] = result
 
     save_results(results)

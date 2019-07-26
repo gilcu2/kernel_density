@@ -7,5 +7,6 @@ if __name__ == '__main__':
     for data_name in datas:
         data = InputData(data_name, dir)
         data.shuffle()
-        data.show()
+        # data.show()
         data.save_learning(dir)
+        print('Data', data_name, 'saved')

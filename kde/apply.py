@@ -1,5 +1,6 @@
 from kde_big_sigma import sum_probability_parallel
 from learning_data import *
+from utils import *
 
 
 def apply(sigma: float, train: np.ndarray, test: np.ndarray):
@@ -18,12 +19,12 @@ def apply(sigma: float, train: np.ndarray, test: np.ndarray):
 
 if __name__ == '__main__':
     dir = "../data/"
-    datas = [mnist, cifar]
+    data_names = [mnist, cifar]
     sigma = 0.2
 
     print('Begin fit', now())
 
-    for data_name in datas:
+    for data_name in data_names:
         print('\nData:', data_name)
 
         train_data = LearningData.from_file(data_name, 'train', dir)
@@ -34,4 +35,4 @@ if __name__ == '__main__':
 
         apply(sigma, train_data.features, test_data.features)
 
-    print('End fit', now())
+    print('End apply', now())
