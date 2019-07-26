@@ -8,6 +8,8 @@ from kde.kde_big_sigma import sum_probability_parallel
 from kde.learning_data import *
 from kde.utils import *
 
+import argparse
+
 FitResult = Tuple[float, float, datetime]
 FitResults = Tuple[float, float, Sequence[FitResult]]
 
@@ -56,15 +58,22 @@ def save_results(all_results: Dict[str, FitResults]):
 
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-k', type=int, default=10000)
+    parser.add_argument('-m', type=int, default=10000)
+    args = vars(parser.parse_args())
+
     dir = "../data/"
     datas = [mnist, cifar]
     sigmas = [0.05, 0.08, 0.1, 0.2, 0.5, 1.0, 1.5, 2.0]
 
+    k = args['k']
+    m = args['m']
+
     print('Begin fit', now())
 
     results = {}
-    k = 10000
-    m = 10000
 
     for data_name in datas:
         print('\nData:', data_name)
