@@ -87,7 +87,10 @@ Reynaldo Gil
 
 \begin_layout Abstract
 The work show the results of creating and optimizing python code for computing
- a Kernel Density Estimator over object of very high dimensionality.
+ a Kernel Density Estimator over objects of high dimensionality.
+ The main result is an optimized library that take advantages of the vector
+ operation and multiprocessing capabilities of modern computers.
+ Besides the application of this method to images was studied.
 \end_layout
 
 \begin_layout Section
@@ -100,6 +103,34 @@ Kernel Density Estimation (KDE) is a non-parametric way to estimate the
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kde_wiki"
+literal "false"
+
+\end_inset
+
+).
+ It is very related to histograms because using it smoothing histograms
+ can be obtained.
+ The technique allows in general to approximate a function in any point
+ as the sum of kernel functions collocated in the points of known data.
+ The kernel functions have parameters that can be optimized using a learning
+ process.
+ 
+\end_layout
+
+\begin_layout Standard
+In this work the kernel selected is a Gaussian and the data are images from
+ the standard databases Minist (
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Mnist"
+literal "false"
+
+\end_inset
+
+) and Cifar (
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cifar10"
 literal "false"
 
 \end_inset
@@ -147,7 +178,11 @@ Assuming that
 \begin_inset Formula $p(x|z_{i})$
 \end_inset
 
- is described by the product of Gaussian components for each dimension:
+ is described by the product of Gaussian components with the same 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ for each dimension:
 \end_layout
 
 \begin_layout Standard
@@ -309,15 +344,16 @@ The implementation consist of one module named kde and the corresponding
 \begin_layout Standard
 The interpreted and dynamic computation of python allow an easy programming
  but the execution is very inefficient because every object use a lot of
- additional memory and need to check its type in execution time.
- This problem increase with the data size.
+ additional memory and need to check its type in execution time among another
+ problems.
+ These problem increase with the data size.
  It is needed to avoid computation in Python to achieve a better performance.
  Due to this problem, a lot of libraries implemented in C or other languages
  have been created.
  This libraries do the hard work and python works as the glue between then.
  In particular numpy is the basic library for scientific computing.
  It implements vector operations that can be optimized for some architectures.
- In our running numpy was using openblas library.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -675,7 +711,14 @@ As can be see the better fit for both data is obtained when
 \end_layout
 
 \begin_layout Standard
-The times for Minist were around 2 minutes while for Cifar were 5 minutes.
+The experiments were running in an i7-8750 CPU with 32 Gb and Linux.
+ Numpy was using openblas library.
+ The times for Minist were around 2 minutes for each 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ value.
+ In Cifar were 5 minutes.
  These is an expected behavior because Mnist images are blanck and white
  with a lot of ceros while Cifar is created by averaging color images and
  have a few zeros.
@@ -687,11 +730,33 @@ KDE on images
 
 \begin_layout Standard
 The kernel density estimation is a way to learn and reproduce some function,
- in particular in gray images to learn the intensity on each point.
- For me have more sense if it is used to learn one class, for example in
- Mnist learn each number.
- With the corresponding estimation we can for example create an image of
- the average number.
+ in particular in gray images can be used to learn the intensity on each
+ point.
+ For me have more sense if the points are considered in 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ so the Gaussian in a point has more influence in its 
+\begin_inset Formula $R²$
+\end_inset
+
+ neighbors.
+ For example 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Pereira2015"
+literal "false"
+
+\end_inset
+
+ uses KDE in the spatial domain for image segmentation.
+\end_layout
+
+\begin_layout Standard
+Also it must be used to learn one class, for example in Mnist learn each
+ number, because if not I don't understand what it is learned.
+ With the corresponding estimation we can for example create an smoothing
+ image of the average number.
 \end_layout
 
 \begin_layout Standard

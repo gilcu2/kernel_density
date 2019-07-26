@@ -20,18 +20,21 @@
 ### Activate venv
 source venv/bin/activate
 
-### Software Test
-- cd tests
-- pytest
-- All test must end ok
-
 ### Data preprocessing
 
 - cd ../kde
 - ./preprocessing.py
 - When finish must have mnist-[train,validation,test].pkl and cifar-[train,validation,test].pkl in data dir
 
+
+### Software Test
+- cd tests
+- pytest
+- All test must end ok
+
+
 ### kde fit
+- cd ../kde
 - ./fit.py
 - when finish must have kde-fit.csv, mnist-fit.csv and cifar-fit.csv in dta dir
 

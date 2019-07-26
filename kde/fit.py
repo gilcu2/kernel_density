@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+import sys
+
+sys.path.extend(['../', '../kde'])
+
 from kde.kde_big_sigma import sum_probability_parallel
 from kde.learning_data import *
 from kde.utils import *

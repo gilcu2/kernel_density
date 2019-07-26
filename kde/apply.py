@@ -1,9 +1,15 @@
+#!/usr/bin/env python3
+
+import sys
+
+sys.path.extend(['../', '../kde'])
+
 from kde_big_sigma import sum_probability_parallel
 from learning_data import *
 from utils import *
 
 
-def apply(sigma: float, train: np.ndarray, test: np.ndarray):
+def apply(sigma: float, train: np.ndarray, test: np.ndarray) -> float:
     m = test.shape[0]
 
     begin = now()
@@ -15,6 +21,7 @@ def apply(sigma: float, train: np.ndarray, test: np.ndarray):
     end = now()
     print('mean log probability:', value)
     print('Time:', end - begin, now())
+    return value
 
 
 if __name__ == '__main__':
@@ -22,17 +29,23 @@ if __name__ == '__main__':
     data_names = [mnist, cifar]
     sigma = 0.2
 
+    k = 10000
+    m = 10000
+
     print('Begin fit', now())
+    results = [('data', 'sigma', 'quality')]
 
     for data_name in data_names:
         print('\nData:', data_name)
 
-        train_data = LearningData.from_file(data_name, 'train', dir)
-        print("Training:", train_data.shape)
+        train = LearningData.from_file(data_name, 'train', dir).features[:k]
+        print("Training:", train.shape)
 
-        test_data = LearningData.from_file(data_name, 'test', dir)
-        print("Test:", test_data.shape)
+        test = LearningData.from_file(data_name, 'test', dir).features[:m]
+        print("Test:", test.shape)
 
-        apply(sigma, train_data.features, test_data.features)
+        q = apply(sigma, train, test)
+        results.append((data_name,sigma,q))
 
+    save_csv(results,'../data/kde_test.csv')
     print('End apply', now())
