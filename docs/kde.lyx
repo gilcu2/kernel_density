@@ -78,7 +78,7 @@
 \begin_body
 
 \begin_layout Title
-Optimizing Kernel Density Estimator in Python
+Optimizing of Kernel Density Estimator in Python
 \end_layout
 
 \begin_layout Author
@@ -86,9 +86,9 @@ Reynaldo Gil
 \end_layout
 
 \begin_layout Abstract
-The work show the results of creating and optimizing python code for computing
+The work shows the results of creating and optimizing python code for computing
  a Kernel Density Estimator over objects of high dimensionality.
- The main result is an optimized library that take advantages of the vector
+ The main result is an optimized library that takes advantages of the vector
  operation and multiprocessing capabilities of modern computers.
  Besides the application of this method to images was studied.
 \end_layout
@@ -108,9 +108,9 @@ literal "false"
 \end_inset
 
 ).
- It is very related to histograms because using it smoothing histograms
+ It is very much related to histograms because using it, smoothing histograms
  can be obtained.
- The technique allows in general to approximate a function in any point
+ In general, the technique allows to approximating a function at any point
  as the sum of kernel functions collocated in the points of known data.
  The kernel functions have parameters that can be optimized using a learning
  process.
@@ -118,8 +118,8 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-In this work the kernel selected is a Gaussian and the data are images from
- the standard databases Minist (
+In this work, the kernel selected is a Gaussian and the data are images
+ from the standard databases Mnist (
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Mnist"
@@ -255,10 +255,10 @@ This is equivalent to:
 \begin_layout Standard
 Unless both formulas produce the same results, in the work is used the first
  one.
- On it the computation that depends of the data vectors is small and separated
- of the computation that only depends on parameters and sizes, that need
+ On it, the computation that depends on the data vectors is small and separated
+ from the computation that only depends on parameters and sizes, that need
  to be computed only one time.
- So, it is a bit easier to optimize the code in this way.
+ Therefore, it is a bit easier to optimize the code in this way.
 \end_layout
 
 \begin_layout Standard
@@ -285,15 +285,18 @@ One problem we found was the computation of
 \begin_inset Formula $\log\sum_{i=1}^{k}e^{-\frac{\left|x-z_{i}\right|^{2}}{2\sigma^{2}}}$
 \end_inset
 
- because when 
+ .
+ When 
 \begin_inset Formula $\sigma$
 \end_inset
 
- is small and the vector have high dimensionality the exponential return
- zero due the value be so large and the limited resolution of the fixed
- point arithmetic.
- One solution can be use other arithmetic, but they are so slow.
- The problem can be solved more efficiently using LogSumExp (
+ is small and the vector have high dimensionality the exponent value is
+ so much large.
+ This and the limited resolution of the fixed point arithmetic cause the
+ exponential return zero.
+ One solution can be using a more resolution arithmetic, but they are slower.
+ Fortunately, the problem can be solved more efficiently using LogSumExp
+ (
 \begin_inset CommandInset citation
 LatexCommand cite
 key "LogSumExp"
@@ -324,51 +327,75 @@ Implementation
 \end_layout
 
 \begin_layout Standard
-The implementation consist of one module named kde and the corresponding
+The implementation consists of one module named kde and the corresponding
  test module.
- There are 3 main programs: preprocessing.py that create the requested data
- from the original, fit.py that find the best 
+ There are 3 main programs: preprocessing.py that creates the requested data
+ from the original, fit.py that finds the best 
 \begin_inset Formula $\sigma$
 \end_inset
 
- and apply.py that run the best 
+ and apply.py that runs the best 
 \begin_inset Formula $\sigma$
 \end_inset
 
  found over the testing collection.
- Besides there are two version of the kde implementation using both formulas.
- In the root directory is a Readme.md file that explain the steps for run
- the programs.
+ Besides, there are two versions of the kde implementation using both formulas.
+ Using it we can check that they coincide.
+ In the root directory it is a Readme.md file that explains the steps to
+ run the programs.
 \end_layout
 
 \begin_layout Standard
-The interpreted and dynamic computation of python allow an easy programming
- but the execution is very inefficient because every object use a lot of
- additional memory and need to check its type in execution time among another
- problems.
- These problem increase with the data size.
- It is needed to avoid computation in Python to achieve a better performance.
- Due to this problem, a lot of libraries implemented in C or other languages
+The interpreted and dynamic computation of python allows easy programming.
+ However, the execution is very inefficient because every object uses a
+ lot of additional memory and it is needed to check its type in execution
+ time, among other problems.
+ These problems increase with the data size.
+ It is needed to avoid computation in Python to achieve better performance.
+ Due to these problems, a lot of libraries implemented in C or other languages
  have been created.
- This libraries do the hard work and python works as the glue between then.
- In particular numpy is the basic library for scientific computing.
+ These libraries do the hard work and python works as the glue between them.
+ In particular, numpy is the basic library for scientific computing.
  It implements vector operations that can be optimized for some architectures.
  
 \end_layout
 
 \begin_layout Standard
-The first optimization was implement all the operations that where possible
+The first optimization was implementing all the operations that where possible
  using numpy functions over arrays.
  This avoid the overload python execution and can take advantage of the
  vector operation.
+ For example the computation of 
+\begin_inset Formula $\log\sum_{i=1}^{k}e^{-\frac{\left|x-z_{i}\right|^{2}}{2\sigma^{2}}}$
+\end_inset
+
+ was done using differences, maximum, norm, squares and division by scalar
+ from numpy.
+ One operation that is a lost of efficiency is compute the square of the
+ norm because we needed to compute the norm and the squares but we did not
+ found a way to avoid it.
+ So, if this work need to be improved this is one point to a better implementati
+on.
+ Another improve that be done is the computation of the mapping, for example
+ for map from the validation vector to 
+\begin_inset Formula $\log$
+\end_inset
+
+p(x).
+ That was implemented with a normal python call and reduce.
+ This can be done in numpy but it is needed to create an ufunc, so with
+ more time can be done too.
 \end_layout
 
 \begin_layout Standard
-The second was paralyzing the code at a higher functional level.
- This algorithm offer several levels of parallelism, in particular the terms
- of the final evaluating function can be computed independently.
- For compute the validation or testing, the matrix is divided among the
+The second was parallelizing the code at a higher functional level.
+ This algorithm has several levels of parallelism.
+ In particular the terms of the sum in the quality function can be computed
+ independently.
+ For computing the validation or testing, the matrix is divided among the
  available processors using the multiprocessing library.
+ Using these parallelism level was easy and achieve a high reduction of
+ times.
 \end_layout
 
 \begin_layout Section
@@ -381,10 +408,27 @@ First, the best value of
 \end_inset
 
  for each data was found.
- The result are:
+ The result are shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Quality-again"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="3">
 <features tabularvalignment="middle">
@@ -691,37 +735,138 @@ Q
 
 \end_layout
 
-\begin_layout Standard
-As can be see the better fit for both data is obtained when 
-\begin_inset Formula $\sigma=0.2$
-\end_inset
+\begin_layout Plain Layout
+\begin_inset Caption Standard
 
- and the fits improve gradually while are more near the best value.
- One thing I do not understand is why positive values are obtained.
- If we are computing log of probabilities the results must be negatives.
- I implemented both formula versions and the results were the same.
- Unless I have doubt about the absolute values I thing that the trend is
- clear.
- When we get the optimized value of 
+\begin_layout Plain Layout
+Quality again 
 \begin_inset Formula $\sigma$
 \end_inset
 
- is when the kernel density estimation better adjust with the validation
- data.
+
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Quality-again"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-The experiments were running in an i7-8750 CPU with 32 Gb and Linux.
+As can be seen, the better fit for both data is obtained when 
+\begin_inset Formula $\sigma=0.2$
+\end_inset
+
+ and the quality improve while are more near the best value.
+ There is one problem, why positive values are obtained? If we are computing
+ log of probabilities the results must be negatives.
+ I implemented both formula versions and the results were the same.
+ Unless I have doubt about the absolute values, I think that the trend is
+ clear.
+ The optimized value of 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is obtained when the kernel density estimation better adjusts with the
+ validation data.
+\end_layout
+
+\begin_layout Standard
+The experiments were running in an i7-8750 CPU with 6 cores, hyperthreading
+ and 32 Gb and Linux.
  Numpy was using openblas library.
  The times for Minist were around 2 minutes for each 
 \begin_inset Formula $\sigma$
 \end_inset
 
- value.
- In Cifar were 5 minutes.
- These is an expected behavior because Mnist images are blanck and white
+ value with 8 cores.
+ In Cifar were about 5 minutes.
+ These is an expected behavior because Mnist images are black and white
  with a lot of ceros while Cifar is created by averaging color images and
- have a few zeros.
+ has a few zeros.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Times-again-cores"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the times for testing on each data with the best 
+\begin_inset Formula $\sigma=0.$
+\end_inset
+
+2.
+ Can be seen that the times decrease with the number of processor but not
+ linearly.
+ This behavior can be explained because unless the problem is embarrassing
+ parallel several resources of the computer are shared like the caches of
+ the CPU and the memory.
+ Besides, the numpy fights for cores with the multiprocessing approach.
+ Also the real cores are only 6, when are used more they share computations
+ units too, therefore the performance can not improve the same.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename times.svg
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Time again cores
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Times-again-cores"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -730,7 +875,7 @@ KDE on images
 
 \begin_layout Standard
 The kernel density estimation is a way to learn and reproduce some function,
- in particular in gray images can be used to learn the intensity on each
+ in particular in grey images can be used to learn the intensity on each
  point.
  For me have more sense if the points are considered in 
 \begin_inset Formula $R^{2}$
@@ -753,9 +898,9 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-Also it must be used to learn one class, for example in Mnist learn each
- number, because if not I don't understand what it is learned.
- With the corresponding estimation we can for example create an smoothing
+Also, it must be used to learn one class, for example in Mnist learn using
+ images of one number, because if not I don't understand what it is learned.
+ With the corresponding estimation we can, for example, create an smoothing
  image of the average number.
 \end_layout
 
